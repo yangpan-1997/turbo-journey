@@ -1,0 +1,84 @@
+{
+  "name": "番茄钟 - Pomodoro Timer",
+  "short_name": "番茄钟",
+  "description": "功能强大的番茄工作法应用，支持自定义时间、任务管理、统计数据、Webhook 集成和日历同步",
+  "start_url": "/pomodoro.html",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#ffffff",
+  "theme_color": "#ff6b6b",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><circle cx='96' cy='96' r='96' fill='%23ff6b6b'/><text x='96' y='120' font-size='120' text-anchor='middle' fill='white' font-family='Arial'>🍅</text></svg>",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><circle cx='256' cy='256' r='256' fill='%23ff6b6b'/><text x='256' y='330' font-size='320' text-anchor='middle' fill='white' font-family='Arial'>🍅</text></svg>",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><circle cx='96' cy='96' r='96' fill='%23ff6b6b'/><text x='96' y='120' font-size='120' text-anchor='middle' fill='white' font-family='Arial'>🍅</text></svg>",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 540 720'><rect fill='%23f8f9fa' width='540' height='720'/><circle cx='270' cy='200' r='120' fill='none' stroke='%23ff6b6b' stroke-width='8'/><text x='270' y='230' font-size='80' text-anchor='middle' fill='%23ff6b6b' font-family='monospace' font-weight='bold'>25:00</text><text x='270' y='320' font-size='32' text-anchor='middle' fill='%232c3e50'>专注时间</text><rect x='100' y='400' width='340' height='50' fill='%23ff6b6b' rx='8'/><text x='270' y='435' font-size='24' text-anchor='middle' fill='white'>开始</text></svg>",
+      "sizes": "540x720",
+      "type": "image/svg+xml",
+      "form_factor": "narrow"
+    },
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1280 720'><rect fill='%23f8f9fa' width='1280' height='720'/><circle cx='320' cy='200' r='100' fill='none' stroke='%23ff6b6b' stroke-width='6'/><text x='320' y='220' font-size='60' text-anchor='middle' fill='%23ff6b6b' font-family='monospace' font-weight='bold'>25:00</text><rect x='500' y='100' width='300' height='500' fill='white' stroke='%23e0e0e0' stroke-width='2' rx='10'/><text x='650' y='140' font-size='20' text-anchor='middle' fill='%232c3e50' font-weight='bold'>任务列表</text></svg>",
+      "sizes": "1280x720",
+      "type": "image/svg+xml",
+      "form_factor": "wide"
+    }
+  ],
+  "categories": ["productivity", "utilities"],
+  "shortcuts": [
+    {
+      "name": "开始工作",
+      "short_name": "工作",
+      "description": "开始 25 分钟的专注工作时段",
+      "url": "/pomodoro.html?action=start-work",
+      "icons": [
+        {
+          "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 96 96'><circle cx='48' cy='48' r='48' fill='%23ff6b6b'/><text x='48' y='62' font-size='60' text-anchor='middle' fill='white' font-family='Arial'>🍅</text></svg>",
+          "sizes": "96x96",
+          "type": "image/svg+xml"
+        }
+      ]
+    },
+    {
+      "name": "查看统计",
+      "short_name": "统计",
+      "description": "查看今日统计数据",
+      "url": "/pomodoro.html?action=view-stats",
+      "icons": [
+        {
+          "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 96 96'><circle cx='48' cy='48' r='48' fill='%234ecdc4'/><text x='48' y='62' font-size='60' text-anchor='middle' fill='white' font-family='Arial'>📊</text></svg>",
+          "sizes": "96x96",
+          "type": "image/svg+xml"
+        }
+      ]
+    }
+  ],
+  "share_target": {
+    "action": "/share",
+    "method": "POST",
+    "enctype": "multipart/form-data",
+    "params": {
+      "title": "title",
+      "text": "text",
+      "url": "url"
+    }
+  }
+}

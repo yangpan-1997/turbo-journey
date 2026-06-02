@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="功能强大的番茄工作法应用，支持自定义时间、任务管理、统计数据、Webhook 集成和日历同步">
+    <meta name="theme-color" content="#ff6b6b">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="番茄钟">
+    <title>番茄钟 - Pomodoro Timer</title>
+    <link rel="stylesheet" href="pomodoro.css">
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='50' fill='%23ff6b6b'/><text x='50' y='70' font-size='70' text-anchor='middle' fill='white'>🍅</text></svg>">
+</head>
+<body>
+    <div class="container">
+        <!-- 顶部标题 -->
+        <header>
+            <h1>🍅 番茄钟</h1>
+            <p class="subtitle">让专注变得简单</p>
+        </header>
+
+        <!-- 主计时器区域 -->
+        <div class="timer-section">
+            <div class="mode-indicator">
+                <span id="modeText" class="mode-text">专注时间</span>
+                <span id="sessionCount" class="session-count">第 1 番茄</span>
+            </div>
+
+            <div class="timer-display">
+                <div class="timer-circle">
+                    <svg class="progress-ring" width="280" height="280">
+                        <circle class="progress-ring-bg" cx="140" cy="140" r="130"/>
+                        <circle id="progressRing" class="progress-ring-circle" cx="140" cy="140" r="130"/>
+                    </svg>
+                    <div class="time-display">
+                        <span id="minutes">25</span>:<span id="seconds">00</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 控制按钮 -->
+            <div class="controls">
+                <button id="startBtn" class="btn btn-primary">开始</button>
+                <button id="pauseBtn" class="btn btn-secondary" disabled>暂停</button>
+                <button id="resetBtn" class="btn btn-secondary">重置</button>
+            </div>
+
+            <!-- 快速设置 -->
+            <div class="quick-settings">
+                <label>工作时长 (分钟):</label>
+                <input type="number" id="workDuration" min="1" max="60" value="25">
+                
+                <label>休息时长 (分钟):</label>
+                <input type="number" id="breakDuration" min="1" max="30" value="5">
+
+                <label>长休息时长 (分钟):</label>
+                <input type="number" id="longBreakDuration" min="5" max="60" value="15">
+
+                <label>每4个番茄后长休息:</label>
+                <input type="checkbox" id="longBreakEnabled" checked>
+            </div>
+        </div>
+
+        <!-- 任务列表 -->
+        <div class="tasks-section">
+            <h2>📋 任务列表</h2>
+            <div class="task-input-group">
+                <input 
+                    type="text" 
+                    id="taskInput" 
+                    placeholder="添加一项新任务..." 
+                    class="task-input"
+                >
+                <button id="addTaskBtn" class="btn btn-small">添加</button>
+            </div>
+
+            <ul id="tasksList" class="tasks-list"></ul>
+            <p id="noTasks" class="no-tasks">还没有任务，点击上方添加任务开始吧！</p>
+        </div>
+
+        <!-- 统计面板 -->
+        <div class="stats-section">
+            <h2>📊 今日统计</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value" id="todayPomodoros">0</div>
+                    <div class="stat-label">完成番茄数</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="totalMinutes">0</div>
+                    <div class="stat-label">专注分钟</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="tasksCompleted">0</div>
+                    <div class="stat-label">完成任务</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="breakCount">0</div>
+                    <div class="stat-label">休息次数</div>
+                </div>
+            </div>
+            <button id="clearStatsBtn" class="btn btn-small">清除今日数据</button>
+        </div>
+
+        <!-- 设置面板 -->
+        <div class="settings-section">
+            <h2>⚙️ 设置</h2>
+            
+            <!-- 通知设置 -->
+            <div class="settings-subsection">
+                <h3>📢 通知设置</h3>
+                <label class="checkbox-label">
+                    <input type="checkbox" id="soundEnabled" checked>
+                    启用声音提醒
+                </label>
+                <label class="checkbox-label">
+                    <input type="checkbox" id="notificationEnabled" checked>
+                    启用浏览器通知
+                </label>
+                <label class="checkbox-label">
+                    <input type="checkbox" id="titleNotificationEnabled" checked>
+                    启用页面标题倒计时
+                </label>
+            </div>
+
+            <!-- Webhook 设置 -->
+            <div class="settings-subsection">
+                <h3>🔗 Webhook 设置</h3>
+                <label>Webhook URL:</label>
+                <input 
+                    type="text" 
+                    id="webhookUrl" 
+                    placeholder="https://hooks.slack.com/... 或其他 Webhook 地址"
+                    class="webhook-input"
+                >
+                <label class="checkbox-label">
+                    <input type="checkbox" id="webhookEnabled">
+                    启用 Webhook 通知
+                </label>
+                <p class="webhook-help">完成工作/休息时段时，会向该 URL 发送 POST 请求</p>
+            </div>
+
+            <!-- 界面设置 -->
+            <div class="settings-subsection">
+                <h3>🎨 界面设置</h3>
+                <label class="checkbox-label">
+                    <input type="checkbox" id="darkMode" checked>
+                    深色模式
+                </label>
+            </div>
+
+            <!-- 数据导出 -->
+            <div class="settings-subsection">
+                <h3>💾 数据导出</h3>
+                <button id="exportCsvBtn" class="btn btn-small">导出为 CSV</button>
+                <button id="exportMarkdownBtn" class="btn btn-small">导出为 Markdown</button>
+                <button id="exportIcsBtn" class="btn btn-small">📅 导出为日历 (ICS)</button>
+                <button id="subscribeIcsBtn" class="btn btn-small">📅 日历订阅链接</button>
+                <p class="webhook-help">导出为 ICS 可导入到 Google Calendar、Outlook、Apple Calendar 等日历应用</p>
+            </div>
+
+            <!-- PWA 安装 -->
+            <div class="settings-subsection">
+                <h3>📲 PWA 应用</h3>
+                <button id="installPwaBtn" class="btn btn-small">安装到桌面</button>
+                <p class="webhook-help" id="pwaStatus">此浏览器支持 PWA 安装。点击按钮在桌面上创建应用快捷方式。</p>
+            </div>
+        </div>
+
+        <!-- 集成面板 -->
+        <div class="settings-section">
+            <h2>🔗 第三方集成</h2>
+
+            <!-- Notion 集成 -->
+            <div class="settings-subsection">
+                <h3>🔗 Notion 数据库</h3>
+                <p class="webhook-help">将番茄钟数据同步到 Notion 数据库</p>
+                <label>Notion API Key:</label>
+                <input 
+                    type="password" 
+                    id="notionApiKey" 
+                    placeholder="secret_xxxxxxxxxxxx"
+                    class="webhook-input"
+                >
+                <label>Database ID:</label>
+                <input 
+                    type="text" 
+                    id="notionDatabaseId" 
+                    placeholder="xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+                    class="webhook-input"
+                >
+                <label class="checkbox-label">
+                    <input type="checkbox" id="notionEnabled">
+                    启用 Notion 同步
+                </label>
+                <button id="notionConnectBtn" class="btn btn-small">🔗 连接 Notion</button>
+                <button id="notionTemplateBtn" class="btn btn-small">📋 Notion 模板</button>
+                <button id="syncToNotionBtn" class="btn btn-small" style="display:none;" id="syncToNotionBtn">同步到 Notion</button>
+                <p class="webhook-help" id="notionStatus"></p>
+            </div>
+
+            <!-- 飞书集成 -->
+            <div class="settings-subsection">
+                <h3>🐟 飞书</h3>
+                <p class="webhook-help">将番茄钟任务和统计发送到飞书</p>
+                <label>飞书 Webhook URL:</label>
+                <input 
+                    type="text" 
+                    id="feishuWebhook" 
+                    placeholder="https://open.feishu.cn/open-apis/bot/v2/hook/..."
+                    class="webhook-input"
+                >
+                <label class="checkbox-label">
+                    <input type="checkbox" id="feishuEnabled">
+                    启用飞书通知
+                </label>
+                <button id="feishuTemplateBtn" class="btn btn-small">📋 飞书卡片模板</button>
+                <button id="syncToFeishuBtn" class="btn btn-small">🚀 发送到飞书</button>
+                <p class="webhook-help" id="feishuStatus"></p>
+            </div>
+
+            <!-- 集简云集成 -->
+            <div class="settings-subsection">
+                <h3>⚡ 集简云 (Integromat)</h3>
+                <p class="webhook-help">使用集简云创建自动化工作流</p>
+                <button id="jibeCloudTemplateBtn" class="btn btn-small">📋 集简云工作流模板</button>
+                <button id="exportWebhookConfigBtn" class="btn btn-small">⚙️ 导出 Webhook 配置</button>
+                <p class="webhook-help" id="jibeCloudStatus">集简云允许您创建复杂的自动化工作流。点击上方按钮获取配置。</p>
+            </div>
+
+            <!-- 自动同步设置 -->
+            <div class="settings-subsection">
+                <h3>🔄 自动同步</h3>
+                <label>自动同步间隔 (秒):</label>
+                <input 
+                    type="number" 
+                    id="autoSyncInterval" 
+                    min="0" 
+                    max="300" 
+                    value="0"
+                    class="webhook-input"
+                >
+                <p class="webhook-help">设置 0 禁用自动同步。设置大于 0 的值每隔指定秒数自动同步一次。</p>
+                <p id="syncStatus"></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 隐藏的通知音频 -->
+    <audio id="notificationSound" preload="auto">
+        <source src="data:audio/wav;base64,UklGRiYAAABXQVZFZm10IBAAAAABAAEAQB8AAAB9AAACABAAZGF0YQIAAAAAAA==" type="audio/wav">
+    </audio>
+
+    <script src="pomodoro.js"></script>
+    <script>
+        // 注册 Service Worker
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('service-worker.js')
+                .then(reg => console.log('Service Worker 已注册'))
+                .catch(err => console.log('Service Worker 注册失败:', err));
+        }
+
+        // PWA 安装提示
+        let deferredPrompt;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            const installBtn = document.getElementById('installPwaBtn');
+            if (installBtn) {
+                installBtn.style.display = 'block';
+            }
+        });
+
+        window.addEventListener('appinstalled', () => {
+            console.log('应用已安装到桌面');
+            const pwaStatus = document.getElementById('pwaStatus');
+            if (pwaStatus) {
+                pwaStatus.textContent = '✅ 应用已成功安装到桌面！';
+            }
+        });
+    </script>
+</body>
+</html>
